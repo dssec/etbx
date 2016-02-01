@@ -532,6 +532,8 @@ remap(F, [{_,_} | _] = P) ->
               {K, remap(F, V)}
       end,
       P);
+remap(F, {L}) when is_list(L) ->
+    {remap(F, L)};
 remap(F, V) ->
     F(V).
 
