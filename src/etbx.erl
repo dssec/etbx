@@ -245,6 +245,8 @@ first(_) ->
     
 %% @doc converts a property list into a record.
 -spec to_rec(recspec(), proplist()) -> record().
+to_rec(RSpec, {L}) when is_list(L) ->
+    to_rec(RSpec, L);
 to_rec({R, [_ | N], Spec}, P) when is_atom(R) and is_list(Spec) ->
     list_to_tuple(
       [R | lists:foldl(
