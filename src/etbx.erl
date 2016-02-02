@@ -244,7 +244,7 @@ first(_) ->
     throw(badarg).
     
 %% @doc converts a property list into a record.
--spec to_rec(recspec(), proplist()) -> record().
+-spec to_rec(recspec(), proplist()) -> tuple().
 to_rec(RSpec, {L}) when is_list(L) ->
     to_rec(RSpec, L);
 to_rec({R, [_ | N], Spec}, P) when is_atom(R) and is_list(Spec) ->
