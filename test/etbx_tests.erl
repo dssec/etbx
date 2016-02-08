@@ -177,16 +177,33 @@ pad_test_() ->
      ?_assertEqual([foo, bar, baz], etbx:pad(3, [foo, bar, baz], cho))].
 
 seq_test_() ->
-    [?_assertEqual([1, 2, 3, 4], etbx:take(4, [1, 2, 3, 4, 5])),
-     ?_assertEqual([1, 2, 3],    etbx:take(4, [1, 2, 3])),
-     ?_assertEqual([1, 2, 3, 4], 
-                   etbx:take(4, etbx:seq(fun(Last) ->
-                                                 V = Last + 1,
-                                                 {V, V}
-                                         end, 0))),
-     ?_assertEqual([0, 1, 2, 3], etbx:take(4, etbx:range())),
-     ?_assertEqual([1, 2, 3],    etbx:take(4, etbx:range(1, 4))),
-     ?_assertEqual([2,5,8],      etbx:take(4, etbx:range(2, 10, 3))),
-     ?_assertEqual([1,4,7,10],   etbx:doall(etbx:range(1, 12, 3))),
-     ?_assertEqual([1, 2, 3, 4], etbx:doall(etbx:range(1,5)))].
-
+    Generator1   =   fun(Last) ->
+                        V = Last + 1,
+                        {V, V}
+                    end,
+    {Generator2, 0} = etbx:range(),
+    
+    [?_assertEqual(
+                    {[1, 2, 3, 4], [5]},
+                    etbx:take(4, [1, 2, 3, 4, 5])),
+     ?_assertEqual(
+                    {[1, 2, 3], []},
+                    etbx:take(4, [1, 2, 3])),
+     ?_assertEqual(
+                    {[1, 2, 3, 4], {Generator1, 4}},
+                    etbx:take(4, etbx:seq(Generator1, 0))),
+     ?_assertEqual(
+                    {[0, 1, 2, 3], {Generator2, 4}},
+                    etbx:take(4, etbx:range())),
+     ?_assertEqual(
+                    {[1, 2, 3], []},
+                    etbx:take(4, etbx:range(1, 4))),
+     ?_assertEqual(
+                    {[2,5,8], []},
+                    etbx:take(4, etbx:range(2, 10, 3))),
+     ?_assertEqual(
+                    [1,4,7,10],
+                    etbx:doall(etbx:range(1, 12, 3))),
+     ?_assertEqual(
+                    [1, 2, 3, 4],
+                    etbx:doall(etbx:range(1,5)))].

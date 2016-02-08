@@ -619,7 +619,7 @@ take(N, Seq) ->
     take(N, Seq, []).
 
 take(N, Seq, Acc) when N=:=0 orelse Seq=:=[] ->
-    lists:reverse(Acc);
+    {lists:reverse(Acc), Seq};
 take(N, [H|T], Acc) ->
     take(N-1, T, [H | Acc]);
 take(N, {Generator, State}, Acc) when is_function(Generator) ->
