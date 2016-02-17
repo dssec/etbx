@@ -182,6 +182,7 @@ seq_test_() ->
                         {V, V}
                     end,
     {Generator2, 0} = etbx:range(),
+    {Generator3, 2} = etbx:range(2, 10, 3),
     
     [?_assertEqual(
                     {[1, 2, 3, 4], [5]},
@@ -201,6 +202,24 @@ seq_test_() ->
      ?_assertEqual(
                     {[2,5,8], []},
                     etbx:take(4, etbx:range(2, 10, 3))),
+     ?_assertEqual(
+                    {[1, 2, 3], [4, 5]},
+                    etbx:take_while(fun(N) -> N < 4 end, [1, 2, 3, 4, 5])),
+     ?_assertEqual(
+                    {[1, 2, 3], []},
+                    etbx:take_while(fun(N) -> N < 4 end, [1, 2, 3])),
+     ?_assertEqual(
+                    {[1, 2, 3], {Generator1, 3}},
+                    etbx:take_while(fun(N) -> N < 4 end, etbx:seq(Generator1, 0))),
+     ?_assertEqual(
+                    {[0, 1, 2, 3], {Generator2, 4}},
+                    etbx:take_while(fun(N) -> N < 4 end, etbx:range())),
+     ?_assertEqual(
+                    {[1, 2, 3], []},
+                    etbx:take_while(fun(N) -> N < 4 end, etbx:range(1, 4))),
+     ?_assertEqual(
+                    {[2], {Generator3, 5}},
+                    etbx:take_while(fun(N) -> N < 4 end, etbx:range(2, 10, 3))), 
      ?_assertEqual(
                     [1,4,7,10],
                     etbx:doall(etbx:range(1, 12, 3))),

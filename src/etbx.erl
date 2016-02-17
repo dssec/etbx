@@ -35,6 +35,7 @@
 -export([start_app/1]).
 -export([stop_app/1]).
 -export([take/2]).
+-export([take_while/2]).
 -export([to_atom/1, to_atom/2]).
 -export([to_binary/1]).
 -export([to_float/1]).
@@ -631,6 +632,34 @@ take(N, {Generator, State}, Acc) when is_function(Generator) ->
                           {{Generator, NState}, [Value|Acc]}
                   end,
     take(N-1, Seq, NAcc).
+
+take_while(Fun, Seq) when not is_function(Fun)->
+    {[], Seq};
+take_while(Fun, Seq) ->
+    take_while(false, Fun, Seq, []).
+
+take_while(Stop, _Fun, Seq, Acc) when Stop =:= true orelse Seq =:= [] ->
+    {lists:reverse(Acc), Seq};
+take_while(false, Fun, [H | T], Acc) ->
+    case Fun(H) of
+        true ->
+            take_while(false, Fun, T, [H | Acc]);
+        false ->
+            take_while(true, Fun, [H | T], Acc)
+    end;
+take_while(false, Fun, {Generator, State}, Acc) when is_function(Generator) ->
+    {Stop, Seq, NAcc} = case Generator(State) of
+        {undefined, _} ->
+            {true, [], Acc};
+        {Value, NState} ->
+            case Fun(Value) of
+                false ->
+                    {true, {Generator, State}, Acc};
+                true ->
+                    {false, {Generator, NState}, [Value | Acc]}
+            end
+    end,
+    take_while(Stop, Fun, Seq, NAcc).
 
 range() ->
     range(0).
