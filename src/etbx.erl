@@ -35,6 +35,7 @@
 -export([start_app/1]).
 -export([stop_app/1]).
 -export([take/2]).
+-export([take_while/2]).
 -export([to_atom/1, to_atom/2]).
 -export([to_binary/1]).
 -export([to_float/1]).
@@ -631,6 +632,22 @@ take(N, {Generator, State}, Acc) when is_function(Generator) ->
                           {{Generator, NState}, [Value|Acc]}
                   end,
     take(N-1, Seq, NAcc).
+
+take_while(Pred, Seq) ->
+    take_while(Pred, Seq, []).
+
+take_while(Pred, Seq, Acc) ->
+    case take(1, Seq) of
+        {[], _} ->
+            {lists:reverse(Acc), Seq};
+        {[Value], NSeq} ->
+            Stop = not Pred(Value),
+            if Stop ->
+                {lists:reverse(Acc), Seq}; 
+            true ->
+                take_while(Pred, NSeq, [Value | Acc])
+            end
+    end.
 
 range() ->
     range(0).
