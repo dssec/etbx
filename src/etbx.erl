@@ -286,7 +286,9 @@ update(K, V, [{_,_}|_] = L) ->
 update(K, V, {L}) when is_list(L) ->
     {update(K, V, L)};
 update(K, V, M) when is_map(M) ->
-    maps:put(K, V, M).
+    maps:put(K, V, M);
+update(K, V, D = {dict,_,_,_,_,_,_,_,_}) ->
+    dict:store(K, V, D).
 
 %% @doc delete property K from associative structure
 -spec delete(any(), proplist() | map()) -> proplist() | map().
@@ -297,7 +299,9 @@ delete(K, [{_, _} | _] = L) ->
 delete(K, {L}) when is_list(L) ->
     {delete(K, L)};
 delete(K, M) when is_map(M) ->
-    maps:remove(K, M).
+    maps:remove(K, M);
+delete(K, D = {dict,_,_,_,_,_,_,_,_}) ->
+    dict:erase(K, D).
 
 %% @doc merge objects in list L. It returns a single object with
 %% all the merged values. If a key is present in the list more than once,
@@ -486,6 +490,11 @@ get_value(K, O, D) when is_list(O) ->
     proplists:get_value(K, O, D);
 get_value(K, {O}, D) when is_list(O) -> 
     proplists:get_value(K, O, D);
+get_value(K, O = {dict,_,_,_,_,_,_,_,_}, D) ->
+    case dict:find(K, O) of
+        {ok, V} -> V;
+        _ -> D
+    end;
 get_value(_, _, D) ->
     D.
 
