@@ -5,6 +5,7 @@
 -vsn("1.0.0").
 
 -export([any/2]).
+-export([concat/1]).
 -export([contains/2]).
 -export([delete/2]).
 -export([doall/1]).
@@ -688,3 +689,15 @@ doall({Generator, State}, Acc) ->
                           {{Generator, NState}, [Value | Acc]}
                   end,
     doall(Seq, NAcc).
+
+concat([]) ->
+    [];
+concat([ H | T ]) when is_list(H) ->
+    H ++ concat(T);
+concat([ H | _ ] = L) when is_binary(H) ->
+    lists:foldr(
+      fun(Elem, Acc) ->
+              <<Elem/binary, Acc/binary>>
+      end,
+      <<>>,
+      L).

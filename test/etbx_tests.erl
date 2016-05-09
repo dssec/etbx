@@ -227,3 +227,8 @@ seq_test_() ->
      ?_assertEqual(
                     [1, 2, 3, 4],
                     etbx:doall(etbx:range(1,5)))].
+
+concat_test_() ->
+    [?_assertEqual([foo, bar, baz],   etbx:concat([[foo, bar], [], [baz]])),
+     ?_assertEqual(<<"foo bar baz">>, etbx:concat([<<"foo bar">>, <<>>, <<" baz">>]))].
+
