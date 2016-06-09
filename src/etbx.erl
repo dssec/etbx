@@ -523,6 +523,8 @@ select(O, L) when is_map(O) ->
               end
       end,
       #{}, L);
+select({O}, L) ->
+    {select(O, L)};
 select(O, L) when is_list(O) ->
     lists:foldl(
       fun(K, A) ->
