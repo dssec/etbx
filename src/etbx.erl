@@ -26,7 +26,7 @@
 -export([pad/3]).
 -export([partition/2]).
 -export([pretty_stacktrace/0]).
--export([remap/2]).
+-export([remap/2, remap2/2]).
 -export([range/0, range/1, range/2, range/3]).
 -export([run/1, run/2, run/3]).
 -export([select/2]).
@@ -523,8 +523,6 @@ select(O, L) when is_map(O) ->
               end
       end,
       #{}, L);
-select({O}, L) ->
-    {select(O, L)};
 select(O, L) when is_list(O) ->
     lists:foldl(
       fun(K, A) ->
@@ -551,6 +549,22 @@ remap(F, {L}) when is_list(L) ->
     {remap(F, L)};
 remap(F, V) ->
     F(V).
+
+%% @doc Like remap/2 but applies the function to both the key and value of
+%% each element in the associative structure
+-spec remap2(fun(), proplist()) -> proplist().
+remap2(F, {K, {L}} ) when is_list(L) ->
+    F({K, {remap2(F, L)}});
+remap2(F, {K, [{_,_}|_] = V}) ->
+    F({K, remap2(F, V)});
+remap2(F, {K, V}) ->
+    F({K, V});
+remap2(F, {L}) when is_list(L) ->
+    {remap2(F, L)};
+remap2(F, [{_, _} | _] = L) ->
+    [ remap2(F, X) || X <- L];
+remap2(_F, []) ->
+    [].
 
 %% @doc same as expand(M, T, 10)
 -spec expand(proplist() | map(), any()) -> any().
@@ -703,3 +717,4 @@ concat([ H | _ ] = L) when is_binary(H) ->
       end,
       <<>>,
       L).
+

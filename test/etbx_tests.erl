@@ -146,6 +146,13 @@ remap_test_() ->
                    etbx:remap(fun(X) -> X + 1 end,
                               [{foo, 0}, {bar, 1}]))].
 
+remap2_test_() ->
+    [?_assertEqual([{0, foo}, {[{1, baz}], bar}],
+                   etbx:remap2(fun({K, V}) -> {V, K} end,
+                              [{foo, 0}, {bar, [{baz, 1}]}])),
+     ?_assertEqual([],
+                   etbx:remap2(fun(X) -> X end, []))].
+
 expand_test_() ->
     [?_assertEqual([{a, 
                      [{2, 1}, 1, 2],
@@ -231,4 +238,5 @@ seq_test_() ->
 concat_test_() ->
     [?_assertEqual([foo, bar, baz],   etbx:concat([[foo, bar], [], [baz]])),
      ?_assertEqual(<<"foo bar baz">>, etbx:concat([<<"foo bar">>, <<>>, <<" baz">>]))].
+
 
