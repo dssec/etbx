@@ -533,6 +533,8 @@ select(O, L) when is_list(O) ->
                       update(K, V, A)
               end
       end, [], L);
+select({O}, L) when is_list(O) ->
+    {select(O, L)};
 select(_, _) ->
     throw (badarg).
 
