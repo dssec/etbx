@@ -154,7 +154,7 @@ start_app(App) ->
 
 %% @doc Stops an application and all its dependencies. The start token
 %% that needs to be provided here is the one returned by start_app()
--spec(stop_app/1 :: ({ok, atom(), list()} | [string()]) -> ok | any()).
+-spec stop_app({ok, atom(), list()} | [string()]) -> ok | any().
 stop_app({ok, _, Apps}) ->
     stop_apps(Apps);
 stop_app(Apps) ->
