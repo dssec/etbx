@@ -18,7 +18,7 @@
 -export([index_of/2]).
 -export([index_of_any/2]).
 -export([is_nil/0, is_nil/1]).
--export([if_nil/2]).
+-export([if_nil/2, if_not_nil/2]).
 -export([every_fun/1, some_fun/1]).
 -export([maybe_apply/3, maybe_apply/4]).
 -export([merge/1]).
@@ -179,6 +179,16 @@ if_nil(V, D) ->
             D;
        true ->
             V
+    end.
+
+%% @doc checks if value is_nil and returns the given default value if it NOT
+-spec if_not_nil(any(), any()) -> any().
+if_not_nil(V, D) ->
+    case is_nil(V) of
+        true ->
+            V;
+        false ->
+            D
     end.
 
 %% @doc returns a function that checks if all of the predicates in a list
